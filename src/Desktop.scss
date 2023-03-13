@@ -1,0 +1,15 @@
+.desktopContainer{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .desktop{
+        background-color: rgb(55, 184, 184);
+        width: 60vw;
+        height: 80vh;
+        position: relative;
+       
+    }
+}
+

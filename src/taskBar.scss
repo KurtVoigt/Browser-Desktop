@@ -1,0 +1,24 @@
+@import "./utilities/variables.scss";
+
+.taskBar {
+    height: $taskbar-height;
+    width: 99.9%;
+    background-color: $taskbar-color;
+    position: absolute;
+    bottom: 0px;
+    border-color: black;
+    border-width: 1px;
+    border-style: ridge;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    align-items: center;
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+
+}

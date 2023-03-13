@@ -1,0 +1,28 @@
+@import "./utilities/variables.scss";
+
+.startButton {
+    grid-column-start: 0;
+    background-color: $taskbar-color;
+    width: 60px;
+    height: 80%;
+    border: 0.5px inset $taskbar-border-color;
+    margin-left: 5px;
+    text-align: center;
+    cursor: pointer;
+
+    &:active,
+    &.active {
+        background-color: dimgrey;
+    }
+
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+
+
+}

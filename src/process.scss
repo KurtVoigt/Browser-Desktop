@@ -1,0 +1,93 @@
+@import "./utilities/variables.scss";
+
+.processWindow {
+    height: 30%;
+    width: 30%;
+    background-color: $taskbar-color;
+    position: absolute;
+    bottom: 300px;
+    left: 300px;
+    display: grid;
+    grid-template-rows: [title-bar] 30px [app] 1fr;
+    overflow:hidden;
+    resize: both;
+
+    .upperBar {
+        display: flex;
+        align-items: center;
+        background-color: blue;
+        width: 100%;
+        justify-content: space-between;
+        height: 30px;
+        cursor: grab;
+
+        .buttonsContainer {
+            flex: 1;
+            margin-right: 7px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 2px;
+            align-items: center;
+
+            button {
+                height: 20px;
+                width: 20px;
+                text-align: center;
+                padding: 0px;
+            }
+
+            .exitButton {
+                order: 3;
+            }
+
+            .maximizeButton {
+                order: 2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                .square {
+                    height: 8px;
+                    width: 8px;
+                    border: 2px solid black;
+                    border-top: 3px solid black;
+                }
+            }
+
+            .minimizeButton {
+                order: 1;
+            }
+        }
+
+        .title {
+            flex: 4;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+
+            span {
+                text-align: center;
+                padding-left: 2ch;
+                color: white;
+                -webkit-user-select: none;
+                /* Safari */
+                -moz-user-select: none;
+                /* Firefox */
+                -ms-user-select: none;
+                /* IE10+/Edge */
+                user-select: none;
+                /* Standard */
+
+            }
+
+        }
+
+
+
+    }
+
+    .runningApp{
+        margin: 7px;
+        resize: none;
+    }
+}

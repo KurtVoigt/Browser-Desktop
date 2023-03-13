@@ -1,0 +1,40 @@
+@import "./utilities/variables.scss";
+
+.start-menu-container {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: calc($taskbar-height + 2px);
+    max-width: 20%;
+    min-width: 15%;
+    height: 42%;
+    background-color: black;
+    visibility: hidden;
+
+    &.visible {
+        visibility: visible;
+    }
+
+    ;
+
+    //possibly calculate height with js? or simply use grid and fr
+    .start-menu-slot {
+        height: 166px;
+        background-color: $taskbar-color;
+        border: 0.25px solid $taskbar-border-color;
+
+        &:hover {
+            background-color: $start-menu-slot-hover-color;
+        }
+
+        -webkit-user-select: none;
+        /* Safari */
+        -moz-user-select: none;
+        /* Firefox */
+        -ms-user-select: none;
+        /* IE10+/Edge */
+        user-select: none;
+        /* Standard */
+
+    }
+}
