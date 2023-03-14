@@ -1,36 +1,41 @@
-import React, {MouseEvent, FC, createElement, Fragment } from "react";
+import React, { MouseEvent, FC, createElement, Fragment } from "react";
 import "./StartMenu.scss";
 
 
 type StartMenuProps = {
     visible: boolean,
-    onProgramSelect: (event: React.MouseEvent)=>void,
+    onProgramSelect: (event: React.MouseEvent) => void,
+    installedApps: string[]
 }
 
 const StartMenu: FC<StartMenuProps> = ({
     visible,
-    onProgramSelect
+    onProgramSelect,
+    installedApps
 }) => {
     let className = "start-menu-container";
-    if(visible){
+    if (visible) {
         className = className + " visible";
     }
-    
 
-    function createMenuSlots(amount:number): JSX.Element[]{
-            let elements:JSX.Element[] = [];
-            for(let i =1; i <= amount; i++){
-                
-                elements.push(createElement("div",{className: "start-menu-slot", onClick: onProgramSelect, key: i}, `app ${i}`));
-            }
-            return elements;
-        
+
+    function createMenuSlots(): JSX.Element[] {
+        let elements: JSX.Element[] = [];
+        for (let i = 0; i < installedApps.length; i++) {
+
+            elements.push(createElement("div", {
+                className: "start-menu-slot", onClick: onProgramSelect,
+                key: installedApps[i]
+            }, `${installedApps[i]}`));
+        }
+        return elements;
+
     }
-    return(
+    return (
         <div className={className}>
             {
-                createMenuSlots(4).map((element) =>{
-                    return(
+                createMenuSlots().map((element) => {
+                    return (
                         <Fragment key={element.key}>
                             {element}
                         </Fragment>
@@ -41,4 +46,4 @@ const StartMenu: FC<StartMenuProps> = ({
     )
 }
 
-export {StartMenu}
+export { StartMenu }

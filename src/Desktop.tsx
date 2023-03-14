@@ -25,6 +25,8 @@ class ApplicationProcess {
 
 
 
+
+
 //STATE FOR RUNNING WINDOWS
 enum PROCESS_REDUCER_ACTION_TYPES {
     open_program = "OPEN_PROGRAM",
@@ -56,6 +58,7 @@ const initialState: ProcessState = {
 
 //TODO: figure out a way to just pass in number instead of whole process
 const programsReducer = (state: ProcessState, action: ProcessAction): ProcessState => {
+
     switch (action.type) {
         case (PROCESS_REDUCER_ACTION_TYPES.open_program):
             if (typeof action.payload.process !== "number") {
@@ -105,9 +108,11 @@ const Desktop: React.FC = ({
 
     const [processes, dispatchProcesses] = React.useReducer(programsReducer, initialState);
     const [startMenuOpen, setStartMenuOpen] = React.useState(false);
+    const [installedApps, setInstalledApps] = React.useState(["Etch-A-Sketch", "Text Editor"]);
     const desktopRef = React.useRef<HTMLDivElement>(null)
     let desktopHeight: number;
     let desktopWidth: number;
+    
 
 
     //updates ref on render so that process can access height/width for dragging purposes.
@@ -206,11 +211,11 @@ const Desktop: React.FC = ({
         );
     }
 
-
+    
     return (
         <div className='desktopContainer'>
             <div className='desktop' onClick={handleDesktopClick} ref={desktopRef}>
-                <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} />
+                <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} installedApps={installedApps}/>
                 <TaskBar>
                     <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
                     <Clock />
