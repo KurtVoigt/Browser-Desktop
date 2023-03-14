@@ -5,6 +5,8 @@ import { ApplicationProcess } from "./Desktop";
 type ProcessProps = {
     exitApp: (processID: number) => void;
     process: ApplicationProcess;
+    parentRef: React.RefObject<HTMLDivElement>;
+
 }
 
 const Process: FC<ProcessProps> = (
@@ -12,48 +14,66 @@ const Process: FC<ProcessProps> = (
 
         exitApp,
         process,
+        parentRef,
+
 
     }
 ) => {
-//TODO: define and checks bounds of window, research this top and bottom math
-    const [MouseCoords, setMouseCoords] = useState({ x: 301, y: 301 });
-    const [OldMouseCoords, setOldMouseCoords] = useState({ x: 300, y: 300 });
-    const [BottomLeft, setBottomLeft] = useState({ bottom: 300, left: 300 })
-    const [mouseDown, setMouseDown] = useState(false);
-    const processRef = useRef(null);
+    //TODO: define and checks bounds of window, research this top and bottom math
+    const processRef = useRef<HTMLDivElement>(null);
+    const mouseDown = useRef(false);
+    const pos1 = useRef(0);
+    const pos2 = useRef(0);
+    const pos3 = useRef(0);
+    const pos4 = useRef(0);
 
 
 
     //TODO: FIND NEW WAY TO CALCULATE POSITION SO RESIZABLE WORKS BETTER
     const MousePosition = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (mouseDown) {
-            setOldMouseCoords({ x: MouseCoords.x, y: MouseCoords.y });
-            setMouseCoords({ x: event.screenX, y: event.screenY });
+        if (mouseDown.current) {
+            event.preventDefault();
+            pos1.current = (pos3.current - event.clientX);
+            pos2.current = (pos4.current - event.clientY);
+            pos3.current = event.clientX;
+            pos4.current = event.clientY;
+
+            //console.log(processRef.current!.offsetTop);
+
+
+            let offsetTop: number = processRef.current!.offsetTop;
+            let offsetLeft: number = processRef.current!.offsetLeft;
+            //33 is height of taskbar
+            let parentHeight: number = parentRef.current!.offsetHeight - 33;
+            let parentWidth: number = parentRef.current!.offsetWidth;
+           
+
+            if (offsetTop - pos2.current <= 0 ||
+                (offsetTop + processRef.current!.offsetHeight) - pos2.current >= parentHeight) 
+            {
+                ;
+            }
+
+            else {
+                processRef.current!.style.top = `${offsetTop - pos2.current}px`;
+            }
+
+            if (offsetLeft - pos1.current <= 0 ||
+                offsetLeft + processRef.current!.offsetWidth - pos1.current >=parentWidth) 
+            {
+                ;
+            }
+            else {
+                processRef.current!.style.left = `${offsetLeft - pos1.current}px`;
+            }
+
         }
     }
 
 
 
-    
-    useEffect(() => {
-        let left = 0;
-        let bottom = 0;
-
-        left += (MouseCoords.x - OldMouseCoords.x);
 
 
-        if ((MouseCoords.y - OldMouseCoords.y) < 0) {
-            bottom -= ((MouseCoords.y - OldMouseCoords.y) - 0.05);
-        }
-        else if ((MouseCoords.y - OldMouseCoords.y) > 0) {
-            bottom -= ((MouseCoords.y - OldMouseCoords.y) + 0.05);
-        }
-
-        setBottomLeft({
-            bottom: BottomLeft.bottom + bottom,
-            left: BottomLeft.left + left
-        })
-    }, [OldMouseCoords]);
 
     const handleExit = (event: React.MouseEvent) => {
         exitApp(process.pID);
@@ -61,42 +81,43 @@ const Process: FC<ProcessProps> = (
 
     const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         //start tracking where mouse position is
-        setMouseCoords({ x: event.screenX, y: event.screenY });
-        setMouseDown(true);
+        pos3.current = event.clientX;
+        pos4.current = event.clientY;
+        mouseDown.current = true;
     }
     const handleMouseUp = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         //start tracking where mouse position is
-        setMouseDown(false);
+        mouseDown.current = false;
     }
 
-    const maximize =(event: React.MouseEvent<HTMLButtonElement, MouseEvent>):void => {
+    const maximize = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
         console.log(processRef.current)
-        processRef.current.style.bottom= "32px";
-        processRef.current.style.left= "0px";
-        processRef.current.style.width = "100%";
-        processRef.current.style.height= "calc(100% - 32px)";
+        processRef.current!.style.top = "0px";
+        processRef.current!.style.left = "0px";
+        processRef.current!.style.width = "100%";
+        processRef.current!.style.height = "calc(100% - 32px)";
     }
 
-    const retrieveAppComponent= (appName:string):JSX.Element =>{
-        switch(appName){
-           case "Text Editor":
-            return(
-                <textarea className="runningApp"></textarea>
-            )
+    const retrieveAppComponent = (appName: string): JSX.Element => {
+        switch (appName) {
+            case "Text Editor":
+                return (
+                    <textarea className="runningApp"></textarea>
+                )
             default:
-                return(<div></div>)
+                return (<div></div>)
         }
     }
 
     return (
-        <div className="processWindow" style={{ bottom: BottomLeft.bottom, left: BottomLeft.left }} onMouseUp={handleMouseUp}
-        ref={processRef} >
+        <div className="processWindow" onMouseUp={handleMouseUp}
+            ref={processRef} >
             <div className="upperBar" onMouseDown={handleMouseDown} onMouseMove={MousePosition} onMouseLeave={handleMouseUp}>
                 <div className="title"><span unselectable="on">{`${process.name}`}</span></div>
                 <div className="buttonsContainer">
-                    <button className="exitButton" type="button" onClick={handleExit}>❌</button>
-                    <button className="minimizeButton" type="button">➖</button>
-                    <button className="maximizeButton" type="button" onClick={maximize}>
+                    <button className="exitButton" type="button" onClick={handleExit} unselectable="on">❌</button>
+                    <button className="minimizeButton" type="button" unselectable="on">➖</button>
+                    <button className="maximizeButton" type="button" onClick={maximize} unselectable="on">
                         <div className="square"></div>
                     </button>
                 </div>

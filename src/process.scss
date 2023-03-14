@@ -5,7 +5,7 @@
     width: 30%;
     background-color: $taskbar-color;
     position: absolute;
-    bottom: 300px;
+    top: 300px;
     left: 300px;
     display: grid;
     grid-template-rows: [title-bar] 30px [app] 1fr;

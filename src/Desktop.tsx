@@ -107,8 +107,24 @@ const Desktop: React.FC = ({
 
     const [processes, dispatchProcesses] = React.useReducer(programsReducer, initialState);
     const [startMenuOpen, setStartMenuOpen] = React.useState(false);
+    const desktopRef = React.useRef<HTMLDivElement>(null)
+    let desktopHeight: number;
+    let desktopWidth: number;
 
 
+    //updates ref on render so that process can access height/width for dragging purposes.
+    React.useEffect ( () => {
+        
+        if(desktopRef.current){
+            
+             desktopHeight = desktopRef.current.offsetHeight;
+             desktopWidth  = desktopRef.current.offsetWidth;
+            
+        }
+        
+        
+        
+    }, [desktopRef]);
 
 
 
@@ -184,7 +200,7 @@ const Desktop: React.FC = ({
                 {
                     processes.map((process) => {
                         return (
-                            <Process exitApp={handleCloseApp} process={process}  />
+                            <Process exitApp={handleCloseApp} process={process} parentRef={desktopRef} />
                         );
                     })
                 }
@@ -195,7 +211,7 @@ const Desktop: React.FC = ({
 
     return (
         <div className='desktopContainer'>
-            <div className='desktop' onClick={handleDesktopClick}>
+            <div className='desktop' onClick={handleDesktopClick} ref={desktopRef}>
                 <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} />
                 <TaskBar>
                     <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
