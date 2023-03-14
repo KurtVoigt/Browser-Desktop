@@ -1,0 +1,17 @@
+.slotDropDown{
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    position: absolute;
+    gap:0px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 2px;
+    &.visible{
+        visibility: visible;
+        z-index: 10;
+    }
+    .slotOption{
+        margin: 0px;
+    }
+}

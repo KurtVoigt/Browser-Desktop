@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useRef, LegacyRef, MutableRefObject } from "react";
 import "./process.scss";
 import { ApplicationProcess } from "./Desktop";
+import { TextEditor } from "./Desktop-Apps/TextEditor";
 
 type ProcessProps = {
     exitApp: (processID: number) => void;
@@ -102,10 +103,10 @@ const Process: FC<ProcessProps> = (
         switch (appName) {
             case "Text Editor":
                 return (
-                    <textarea className="runningApp"></textarea>
-                )
+                    <TextEditor/>
+                );
             default:
-                return (<div></div>)
+                return (<div></div>);
         }
     }
 

@@ -1,0 +1,26 @@
+@import "../utilities/variables.scss"; 
+
+.textEditorContainer{
+    display: grid;
+    grid-template-rows: [options-bar] 20px [text-area] 1fr;
+    height: 100%;
+    .optionsBar{
+        grid-row-start: span options-bar;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 6px;
+        button{
+            border: none;
+            background-color: $taskbar-color;
+            border: solid 1px transparent;
+            &:hover{
+                border-color: black;
+            }
+        }
+    }
+    .textBox{
+        grid-row-start: span text-area;
+
+    }
+}

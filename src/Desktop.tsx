@@ -1,4 +1,4 @@
-import './Desktop.scss'
+import './Desktop.scss';
 import { TaskBar } from './taskBar';
 import * as React from 'react';
 import { StartButton } from './StartButton';
@@ -23,9 +23,7 @@ class ApplicationProcess {
     //Open()/Close()?
 }
 
-type Coords = {
-    x:number, y:number
-}
+
 
 //STATE FOR RUNNING WINDOWS
 enum PROCESS_REDUCER_ACTION_TYPES {
@@ -196,15 +194,15 @@ const Desktop: React.FC = ({
     //return jsx :)
     const buildAppGuis = (processes: ApplicationProcess[]): JSX.Element => {
         return (
-            <>
+            <React.Fragment>
                 {
                     processes.map((process) => {
                         return (
-                            <Process exitApp={handleCloseApp} process={process} parentRef={desktopRef} />
+                            <Process exitApp={handleCloseApp} process={process} parentRef={desktopRef} key={process.pID}/>
                         );
                     })
                 }
-            </>
+            </React.Fragment>
         );
     }
 
@@ -217,10 +215,7 @@ const Desktop: React.FC = ({
                     <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
                     <Clock />
                 </TaskBar>
-                                
-                
-                {/*can keep a collection of open app states? */}
-                    
+                                                    
                 {buildAppGuis(processes.openProcesses)}
                 
             </div>
@@ -230,4 +225,3 @@ const Desktop: React.FC = ({
 
 
 export { Desktop, ApplicationProcess, }
-export type {Coords};
