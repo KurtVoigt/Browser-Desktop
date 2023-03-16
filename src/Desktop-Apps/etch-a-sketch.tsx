@@ -1,5 +1,5 @@
 import "./etch-a-sketch.scss";
-import { createElement, FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { DropDownMenu, SlotInfo } from "./DropDownMenu";
 
 
