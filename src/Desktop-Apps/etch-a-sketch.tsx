@@ -46,6 +46,7 @@ const EtchASketch: FC = ({
 
     function handleResizeOptionClick(option: string): void {
         let containerRef = gridRef;
+        setSizeMenuOpen(false);
         switch(option){
             case RESIZE_OPTIONS.fourByFour:
                 containerRef.current!.style.gridTemplateColumns = "repeat(4,1fr)";
