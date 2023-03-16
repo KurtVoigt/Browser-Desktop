@@ -2,6 +2,7 @@ import { FC, useState, useEffect, useRef, LegacyRef, MutableRefObject } from "re
 import "./process.scss";
 import { ApplicationProcess } from "./Desktop";
 import { TextEditor } from "./Desktop-Apps/TextEditor";
+import { EtchASketch } from "./Desktop-Apps/etch-a-sketch";
 
 type ProcessProps = {
     exitApp: (processID: number) => void;
@@ -105,6 +106,11 @@ const Process: FC<ProcessProps> = (
                 return (
                     <TextEditor/>
                 );
+            case "Etch-A-Sketch":
+                return(
+                    <EtchASketch/>
+                )
+            
             default:
                 return (<div></div>);
         }

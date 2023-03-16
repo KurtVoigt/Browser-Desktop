@@ -9,18 +9,16 @@ import Draggable from 'react-draggable';
 import App from './App';
 
 
-//checked open up the start menu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-//Next, open up a draggable div!, and menu choices on hover
 
 class ApplicationProcess {
-    public name: string;
+    //might have to change this when it is possible to shut off app
     static GlobalID: number = 0;
+    public name: string;
     public pID: number;
     constructor(name: string) {
         this.name = name;
         this.pID = ++ApplicationProcess.GlobalID;
     }
-    //Open()/Close()?
 }
 
 
@@ -109,7 +107,7 @@ const Desktop: React.FC = ({
     const [processes, dispatchProcesses] = React.useReducer(programsReducer, initialState);
     const [startMenuOpen, setStartMenuOpen] = React.useState(false);
     const [installedApps, setInstalledApps] = React.useState(["Etch-A-Sketch", "Text Editor"]);
-    const desktopRef = React.useRef<HTMLDivElement>(null)
+    const desktopRef = React.useRef<HTMLDivElement>(null);
     let desktopHeight: number;
     let desktopWidth: number;
     
@@ -143,44 +141,27 @@ const Desktop: React.FC = ({
     const handleStartMenuClick = (event: React.MouseEvent<Element, MouseEvent>) => {
         let ele = event.target as HTMLDivElement;
         switch (ele.innerText) {
-            case "app 1":
+            case installedApps[0]:
                 dispatchProcesses(
                     {
                         type: PROCESS_REDUCER_ACTION_TYPES.open_program,
-                        payload: { process: new ApplicationProcess("Text Editor") }
+                        payload: { process: new ApplicationProcess(installedApps[0]) }
                     }
 
                 );
                 return;
 
-            case "app 2":
+            case installedApps[1]:
                 dispatchProcesses(
                     {
                         type: PROCESS_REDUCER_ACTION_TYPES.open_program,
-                        payload: { process: new ApplicationProcess("app 2") }
+                        payload: { process: new ApplicationProcess(installedApps[1]) }
                     }
 
                 );
                 return;
 
-            case "app 3":
-                dispatchProcesses(
-                    {
-                        type: PROCESS_REDUCER_ACTION_TYPES.open_program,
-                        payload: { process: new ApplicationProcess("app 3") }
-                    }
-
-                );
-                return;
-
-            case "app 4":
-                dispatchProcesses(
-                    {
-                        type: PROCESS_REDUCER_ACTION_TYPES.open_program,
-                        payload: { process: new ApplicationProcess("app 4") }
-                    }
-
-                );
+            default:
                 return;
         }
     }

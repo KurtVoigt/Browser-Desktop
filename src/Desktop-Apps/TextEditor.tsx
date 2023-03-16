@@ -39,12 +39,21 @@ const TextEditor: FC = ({
         setFormatMenuOpen(false);
     }
 
+    function handleFileOptionClick(option: string): void {
+        return;
+    }
+    function handleFormatOptionClick(option: string): void {
+        return;
+    }
+
 
     return (
         <div className="textEditorContainer" onClick={handleAppClick}>
             <div className="optionsBar">
-                <DropDownMenu slotInfo={fileMenu} menuOpen={fileMenuOpen} handleSlotClick={handleSlotClick} />
-                <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick} />
+                <DropDownMenu slotInfo={fileMenu} menuOpen={fileMenuOpen} handleSlotClick={handleSlotClick}
+                    handleSlotOptionClick={handleFileOptionClick} />
+                <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick} 
+                handleSlotOptionClick={handleFormatOptionClick}/>
             </div>
             <textarea className="textBox"></textarea>
         </div>
