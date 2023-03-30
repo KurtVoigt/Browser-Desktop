@@ -1,0 +1,19 @@
+@import "./utilities/variables.scss";
+
+.appBarSlot {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    width: clamp(4px, 15%, 150px);
+    height: 80%;
+    font-size: small;
+    padding-left: 1ch;
+    border: 1px outset $taskbar-border-color;
+    /* Required for text-overflow to do anything */
+    white-space: nowrap;
+    overflow: hidden;
+    &.focused{
+        border: 1px inset $taskbar-border-color;
+        background-color: $start-menu-slot-hover-color;
+    }
+}

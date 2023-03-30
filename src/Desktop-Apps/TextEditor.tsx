@@ -1,13 +1,15 @@
 import "./TextEditor.scss"
 import { FC, useState } from "react";
 import { DropDownMenu, SlotInfo } from "./DropDownMenu";
+import { TextFileModel } from "../../server/models/text-file";
+const mongoose = require("mongoose");
+
 
 
 const TextEditor: FC = ({
 
 }) => {
-
-
+    
     const [fileMenuOpen, setFileMenuOpen] = useState(false);
     const [formatMenuOpen, setFormatMenuOpen] = useState(false);
     let fileMenu: SlotInfo = {
@@ -34,12 +36,17 @@ const TextEditor: FC = ({
         }
     }
 
+    
+
     function handleAppClick(event: React.MouseEvent<HTMLDivElement>): void {
         setFileMenuOpen(false);
         setFormatMenuOpen(false);
     }
 
     function handleFileOptionClick(option: string): void {
+        if(option === "Save"){
+            
+        }
         return;
     }
     function handleFormatOptionClick(option: string): void {
@@ -52,8 +59,8 @@ const TextEditor: FC = ({
             <div className="optionsBar">
                 <DropDownMenu slotInfo={fileMenu} menuOpen={fileMenuOpen} handleSlotClick={handleSlotClick}
                     handleSlotOptionClick={handleFileOptionClick} />
-                <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick} 
-                handleSlotOptionClick={handleFormatOptionClick}/>
+                <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick}
+                    handleSlotOptionClick={handleFormatOptionClick} />
             </div>
             <textarea className="textBox"></textarea>
         </div>

@@ -5,6 +5,7 @@ import { StartButton } from './StartButton';
 import { Clock } from './Clock';
 import { StartMenu } from './StartMenu';
 import { Process } from './process';
+import { AppBarEntry } from './appBarEntry';
 import Draggable from 'react-draggable';
 import App from './App';
 
@@ -15,10 +16,15 @@ class ApplicationProcess {
     static GlobalID: number = 0;
     public name: string;
     public pID: number;
+    public collapsed: boolean;
     constructor(name: string) {
         this.name = name;
         this.pID = ++ApplicationProcess.GlobalID;
+        this.collapsed = false;
+
     }
+
+
 }
 
 
@@ -27,10 +33,13 @@ class ApplicationProcess {
 
 //STATE FOR RUNNING WINDOWS
 enum PROCESS_REDUCER_ACTION_TYPES {
-    open_program = "OPEN_PROGRAM",
-    close_program = "CLOSE_PROGRAM",
-    start_drag = "START_DRAG",
-    end_drag = "END_DRAG",
+    open_program = "OPEN_PROGRAM_ACTION",
+    close_program = "CLOSE_PROGRAM_ACTION",
+    start_drag = "START_DRAG_ACTION",
+    end_drag = "END_DRAG_ACTION",
+    focus_process = "FOCUS_PROCESS_ACTION",
+    collapse_process = "COLLAPSE_PROCESS_ACTION",
+    collapsed_process_id = -1,
 }
 
 interface ProcessAction {
@@ -45,11 +54,13 @@ interface ProcessAction {
 
 type ProcessState = {
     openProcesses: ApplicationProcess[];
-    
+    focusedProcess: number | null;
+
 }
 
 const initialState: ProcessState = {
     openProcesses: [],
+    focusedProcess: null
 }
 
 
@@ -62,7 +73,7 @@ const programsReducer = (state: ProcessState, action: ProcessAction): ProcessSta
             if (typeof action.payload.process !== "number") {
                 let newProcess = action.payload.process as ApplicationProcess;
                 let newState = [...state.openProcesses, newProcess];
-                return { ...state, openProcesses: newState };
+                return { ...state, focusedProcess: newProcess.pID, openProcesses: newState };
             }
             else {
                 return state;
@@ -75,15 +86,42 @@ const programsReducer = (state: ProcessState, action: ProcessAction): ProcessSta
                 return {
                     openProcesses: state.openProcesses.filter((program) => {
                         return (program.pID !== action.payload.process);
-                    })
+                    }),
+                    focusedProcess: null,
                 };
             }
             else {
                 return state;
             }
 
-        case(PROCESS_REDUCER_ACTION_TYPES.end_drag):
-            
+
+        case (PROCESS_REDUCER_ACTION_TYPES.focus_process):
+            if (typeof action.payload.process === "number") {
+                //magic value
+                if (action.payload.process === -1) {
+                    return { ...state, focusedProcess: null };
+                }
+                else{
+                    state.openProcesses.find((p) => {
+                        return p.pID === action.payload.process;
+                    })!.collapsed = false;
+                    return { ...state, focusedProcess: action.payload.process };
+
+                }
+            }
+            else {
+                return state;
+            }
+
+        case (PROCESS_REDUCER_ACTION_TYPES.collapse_process):
+
+            if (typeof action.payload.process === "number") {
+                state.openProcesses.find((p) => {
+                    return p.pID === action.payload.process;
+                })!.collapsed = true;
+            }
+
+            return state;
 
 
         default:
@@ -110,21 +148,21 @@ const Desktop: React.FC = ({
     const desktopRef = React.useRef<HTMLDivElement>(null);
     let desktopHeight: number;
     let desktopWidth: number;
-    
+
 
 
     //updates ref on render so that process can access height/width for dragging purposes.
-    React.useEffect ( () => {
-        
-        if(desktopRef.current){
-            
-             desktopHeight = desktopRef.current.offsetHeight;
-             desktopWidth  = desktopRef.current.offsetWidth;
-            
+    React.useEffect(() => {
+
+        if (desktopRef.current) {
+
+            desktopHeight = desktopRef.current.offsetHeight;
+            desktopWidth = desktopRef.current.offsetWidth;
+
         }
-        
-        
-        
+
+
+
     }, [desktopRef]);
 
 
@@ -177,14 +215,45 @@ const Desktop: React.FC = ({
         })
     }
 
-    //return jsx :)
-    const buildAppGuis = (processes: ApplicationProcess[]): JSX.Element => {
+    const handleAppBarEntryClick = (processID: number) => {
+        dispatchProcesses({
+            type: PROCESS_REDUCER_ACTION_TYPES.focus_process,
+            payload: { process: processID }
+        });
+    }
+
+    const handleCollapseClick = (processID: number) => {
+        dispatchProcesses(
+            {
+                type: PROCESS_REDUCER_ACTION_TYPES.collapse_process,
+                payload: { process: processID }
+            }
+        );
+        dispatchProcesses(
+            {
+                type: PROCESS_REDUCER_ACTION_TYPES.focus_process,
+                payload: { process: -1 }
+            }
+        )
+    }
+
+    //"opens" all currently running apps
+    const buildAppGuis = (openProcesses: ApplicationProcess[]): JSX.Element => {
         return (
             <React.Fragment>
                 {
-                    processes.map((process) => {
+                    openProcesses.map((process) => {
+                        let focused = false;
+                        if (processes.focusedProcess !== null) {
+                            if (processes.focusedProcess === process.pID) {
+                                focused = true;
+                            }
+                        }
                         return (
-                            <Process exitApp={handleCloseApp} process={process} parentRef={desktopRef} key={process.pID}/>
+                            <Process exitApp={handleCloseApp} process={process}
+                                parentRef={desktopRef} focusThis={handleAppBarEntryClick}
+                                collapseThis={handleCollapseClick}
+                                key={process.pID} focused={focused} />
                         );
                     })
                 }
@@ -192,18 +261,18 @@ const Desktop: React.FC = ({
         );
     }
 
-    
+
     return (
         <div className='desktopContainer'>
             <div className='desktop' onClick={handleDesktopClick} ref={desktopRef}>
-                <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} installedApps={installedApps}/>
-                <TaskBar>
+                <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} installedApps={installedApps} />
+                <TaskBar openProcesses={processes.openProcesses} focusNewProcess={handleAppBarEntryClick} focusedProcess={processes.focusedProcess}>
                     <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
                     <Clock />
                 </TaskBar>
-                                                    
+
                 {buildAppGuis(processes.openProcesses)}
-                
+
             </div>
         </div>
     );

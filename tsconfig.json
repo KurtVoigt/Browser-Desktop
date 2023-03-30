@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "server/models", "server/index.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -11,6 +11,13 @@
     grid-template-rows: [title-bar] 30px [app] 1fr;
     overflow:hidden;
     resize: both;
+    z-index: 9;
+    &.focused{
+        z-index: 10;
+    }
+    &.collapsed{
+        visibility: hidden;
+    }
 
     .upperBar {
         display: flex;
@@ -38,6 +45,12 @@
 
             .exitButton {
                 order: 3;
+                color: black;
+                font-weight: 900;
+                font-size: larger;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .maximizeButton {
@@ -52,10 +65,37 @@
                     border: 2px solid black;
                     border-top: 3px solid black;
                 }
+                .doubleSquareLower{
+                    height: 6px;
+                    width: 6px;
+                    border: 2px solid black;
+                    border-top: 3px solid black;
+                    position: relative;
+                    left: 3px;
+                    bottom: -1px;
+                }
+                .doubleSquareUpper{
+                    height: 6px;
+                    width: 7px;
+                    border-right: 2px solid black;
+                    border-top: 2px solid black;
+                    
+                    
+                    position: relative;
+                    left: 0px;
+                    bottom: 4px;
+                }
             }
 
-            .minimizeButton {
+            .collapseButton {
                 order: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                .collapseLine{
+                    border-top: 3px solid black;
+                    width: 80%;
+                }
             }
         }
 

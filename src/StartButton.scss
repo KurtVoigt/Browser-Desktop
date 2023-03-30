@@ -1,9 +1,9 @@
 @import "./utilities/variables.scss";
 
 .startButton {
-    grid-column-start: 0;
+    grid-area: start-button;
     background-color: $taskbar-color;
-    width: 60px;
+    width: $start-button-clock-width;
     height: 80%;
     border: 0.5px inset $taskbar-border-color;
     margin-left: 5px;

@@ -34,6 +34,14 @@ const EtchASketch: FC = ({
     function changeColorMode(): void {
         setColorMode(!colorMode);
     }
+    function determineColorText():string{
+        if(colorMode){
+            return "Monocolor Mode";
+        }
+        else{
+            return "Rainbow Mode";
+        }
+    }
 
     function populateGrid(dimension: number): JSX.Element[] {
         let arr: JSX.Element[] = [];
@@ -83,7 +91,7 @@ const EtchASketch: FC = ({
                 <button type="button" className="clearButton" onClick={rerender}>Clear</button>
                 <DropDownMenu slotInfo={sizeSlotInfo} menuOpen={sizeMenuOpen} handleSlotClick={handleSizeMenuClick}
                     handleSlotOptionClick={handleResizeOptionClick} />
-                <button type="button" className="rainbowButton" onClick={changeColorMode}>Rainbow Mode</button>
+                <button type="button" className="rainbowButton" onClick={changeColorMode}>{determineColorText()}</button>
             </div>
             <div className="gridContainer" ref={gridRef}>
                 {populateGrid(gridSquareDimension).map((element) => {

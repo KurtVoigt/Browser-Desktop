@@ -1,11 +1,9 @@
+@import "./utilities/variables.scss";
 .clockContainer{
-    grid-column-start: 10;
+    grid-area: clock;
+    width: $start-button-clock-width;
     justify-self: end;
-    border-width: 0.5px;
-    border-color: darkslategrey;
-    border-style: inset;
-    padding-left: 5px;
-    padding-right: 5px;
+    border: 0.5px inset $taskbar-border-color;
     margin-right: 5px;
     height: 80%;
     text-align: center;

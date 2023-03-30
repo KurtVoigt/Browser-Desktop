@@ -10,7 +10,9 @@
     border-width: 1px;
     border-style: ridge;
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: calc($start-button-clock-width + 9px) calc(99.9% - calc(2 * $start-button-clock-width + 18px)) calc($start-button-clock-width + 9px);
+    grid-template-rows: auto;
+    grid-template-areas: "start-button collapsed-apps clock";
     align-items: center;
     -webkit-user-select: none;
     /* Safari */
@@ -20,5 +22,14 @@
     /* IE10+/Edge */
     user-select: none;
     /* Standard */
-
+    .appBarStorage{
+        display: flex;
+        align-items: center;
+        border-left: 1px double $taskbar-border-color;
+        border-right: 1px double $taskbar-border-color;
+        height: 90%;
+        gap: 2px;
+        padding-left: 1ch;
+        padding-right: 1ch;
+    }
 }

@@ -7,7 +7,7 @@
     bottom: calc($taskbar-height + 2px);
     max-width: 20%;
     min-width: 15%;
-    height: 42%;
+   
     background-color: black;
     visibility: hidden;
 
@@ -16,11 +16,11 @@
         z-index: 10;
     }
 
-    ;
+    
 
-    //possibly calculate height with js? or simply use grid and fr
     .start-menu-slot {
-        height: 166px;
+        height: 100px;
+        
         background-color: $taskbar-color;
         border: 0.25px solid $taskbar-border-color;
 
