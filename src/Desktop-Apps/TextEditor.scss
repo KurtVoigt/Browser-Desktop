@@ -24,3 +24,19 @@
 
     }
 }
+
+.fileNameDialogue{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    .buttonContainer{
+        button{
+            background-color: $taskbar-color;
+            border: 2px outset $taskbar-border-color;
+            &:active {
+                background-color: dimgrey;
+                border-style: inset;
+            }
+        }
+    }
+}

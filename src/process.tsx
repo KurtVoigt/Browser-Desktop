@@ -10,7 +10,7 @@ type ProcessProps = {
     parentRef: React.RefObject<HTMLDivElement>;
     focused:boolean;
     focusThis:(processID:number)=>void;
-  
+    saveFile ?: (fileName:string)=>void;
     collapseThis:(processID:number)=>void;
 
 }
@@ -23,7 +23,8 @@ const Process: FC<ProcessProps> = (
         parentRef,
         focused,
         focusThis,
-        collapseThis
+        collapseThis,
+        saveFile
 
 
     }
@@ -36,6 +37,11 @@ const Process: FC<ProcessProps> = (
     const pos4 = useRef(0);
     //true = maximize icon, false = minimize icon
     const [sizeModeIcon, setSizeModeIcon] = useState(true);
+    //get around optional type checking, better way?
+    let sureSaveFile:(fileName:string)=>void;
+    if(saveFile){
+        sureSaveFile = saveFile as (fileName:string)=>void;
+    }
 
 
 
@@ -82,7 +88,7 @@ const Process: FC<ProcessProps> = (
 
 
 
-    const handleExit = (event: React.MouseEvent) => {
+    const handleExit = () => {
         exitApp(process.pID);
     }
 
@@ -119,7 +125,7 @@ const Process: FC<ProcessProps> = (
         switch (appName) {
             case "Text Editor":
                 return (
-                    <TextEditor />
+                    <TextEditor exit={handleExit} saveFile={sureSaveFile}/>
                 );
             case "Etch-A-Sketch":
                 return (

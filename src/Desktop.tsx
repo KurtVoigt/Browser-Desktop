@@ -8,6 +8,7 @@ import { Process } from './process';
 import { AppBarEntry } from './appBarEntry';
 import Draggable from 'react-draggable';
 import App from './App';
+import { FileIcon } from './FileIcon';
 
 
 
@@ -17,11 +18,17 @@ class ApplicationProcess {
     public name: string;
     public pID: number;
     public collapsed: boolean;
-    constructor(name: string) {
+    public data: any;
+    constructor(name: string, data?: any) {
         this.name = name;
         this.pID = ++ApplicationProcess.GlobalID;
         this.collapsed = false;
-
+        if (data) {
+            this.data = data;
+        }
+        else {
+            this.data = null;
+        }
     }
 
 
@@ -101,7 +108,7 @@ const programsReducer = (state: ProcessState, action: ProcessAction): ProcessSta
                 if (action.payload.process === -1) {
                     return { ...state, focusedProcess: null };
                 }
-                else{
+                else {
                     state.openProcesses.find((p) => {
                         return p.pID === action.payload.process;
                     })!.collapsed = false;
@@ -141,10 +148,12 @@ const Desktop: React.FC = ({
 }) => {
 
 
-
+    const savedAppsDefault: Array<string> = [];
     const [processes, dispatchProcesses] = React.useReducer(programsReducer, initialState);
     const [startMenuOpen, setStartMenuOpen] = React.useState(false);
     const [installedApps, setInstalledApps] = React.useState(["Etch-A-Sketch", "Text Editor"]);
+    const [savedApps, setSavedApps] = React.useState(savedAppsDefault);
+    const [deselectIcons, setDeselectIcons]= React.useState(true);
     const desktopRef = React.useRef<HTMLDivElement>(null);
     let desktopHeight: number;
     let desktopWidth: number;
@@ -173,6 +182,7 @@ const Desktop: React.FC = ({
     }
     const handleDesktopClick = () => {
         setStartMenuOpen(false);
+        setDeselectIcons(!deselectIcons);
 
     }
 
@@ -237,6 +247,11 @@ const Desktop: React.FC = ({
         )
     }
 
+    const handleSave = (name: string): void => {
+        console.log("called");
+        setSavedApps([...savedApps, name]);
+    }
+
     //"opens" all currently running apps
     const buildAppGuis = (openProcesses: ApplicationProcess[]): JSX.Element => {
         return (
@@ -253,12 +268,29 @@ const Desktop: React.FC = ({
                             <Process exitApp={handleCloseApp} process={process}
                                 parentRef={desktopRef} focusThis={handleAppBarEntryClick}
                                 collapseThis={handleCollapseClick}
-                                key={process.pID} focused={focused} />
+                                key={process.pID} focused={focused} saveFile={handleSave} />
                         );
                     })
                 }
             </React.Fragment>
         );
+    }
+
+    const handleIconClick = ():void=>{
+
+    }
+     
+    const buildIconGuis = (): JSX.Element => {
+        return (
+            <React.Fragment>
+                {
+                    savedApps.map((fileName) => {
+                        return (
+                            <FileIcon fileName={fileName} openFile={handleIconClick} key={fileName} deselectFiles= {deselectIcons}/>
+                        )
+                    })
+                }
+            </React.Fragment>);
     }
 
 
@@ -270,7 +302,7 @@ const Desktop: React.FC = ({
                     <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
                     <Clock />
                 </TaskBar>
-
+                {buildIconGuis()}
                 {buildAppGuis(processes.openProcesses)}
 
             </div>

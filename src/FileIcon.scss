@@ -1,0 +1,44 @@
+
+
+
+.fileIconContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 3ch;
+    height: 60px;
+    width: 50px;
+
+    &.selected {
+        background-color: rgba(19, 27, 145, 25%);
+        height: fit-content;
+
+        .fileName {
+            white-space: normal;
+            overflow:visible;
+            overflow-wrap: break-word;
+            text-overflow: ellipsis;
+
+        }
+        
+    }
+
+    .fileIcon {
+
+        height: 36px;
+        width: 60%;
+        border: 1px solid black;
+        background-color: antiquewhite;
+    }
+
+    .fileName {
+        height: 20%;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
