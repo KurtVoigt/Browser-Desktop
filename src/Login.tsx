@@ -1,9 +1,16 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, Fragment, useState } from "react";
 import "./Login.scss";
 import axios, { AxiosResponse } from "axios";
 
 type LoginProps = {
     token: (token: string) => void;
+}
+
+enum SIGN_UP_ERRORS {
+    UNAVAILABLE_USERNAME = "typeNewUsername",
+    UNAVAILABLE_EMAIL = "emailInUse",
+    PASSWORDS_DONT_MATCH = "unmatchedPasswords",
+    NO_ERRORS = "noErrors",
 }
 
 const Login: FC<LoginProps> = ({
@@ -16,29 +23,52 @@ const Login: FC<LoginProps> = ({
     const [email, setEmail] = useState("");
     const [signIn, setSignIn] = useState(false);
     const [signUp, setSignUp] = useState(false);
+    const [signUpErrors, setSignUpErrors] = useState<SIGN_UP_ERRORS>(SIGN_UP_ERRORS.NO_ERRORS);
 
-    function handleSubmit(event: any) {
+    function handleSignIn(event: any) {
         //submit and wait for token
         console.log("here");
         console.log(event);
     }
 
     function handleSignUp(): void {
-        axios.post('/signup',
-            {
-                userName: userName,
-                password: password,
-                email: email,
-            }).then((response: AxiosResponse) => {
-                //response is token, fire off signedUp Event and assign token
-                if (typeof response.data == 'string') {
-                    token(response.data);
-                }
-                console.log(response);
-            }).catch((error) => {
-                console.log(error);
-            })
+        //check that passwords match and then go to server
+        if (password !== confirmedPassword) {
+            setSignUpErrors(SIGN_UP_ERRORS.PASSWORDS_DONT_MATCH);
+        }
+
+        else {
+            setSignUpErrors(SIGN_UP_ERRORS.NO_ERRORS);
+            axios.post('/signup',
+                {
+                    userName: userName,
+                    password: password,
+                    email: email,
+                }).then((response: AxiosResponse) => {
+                    //response is token, fire off signedUp Event and assign token
+                    if (typeof response.data == 'string') {
+                        token(response.data);
+                    }
+                    console.log(response);
+                }).catch((error) => {
+                    if(error.response){
+                        //bad token, re-login for a new one
+                        if(error.response.status === 409){
+                            if(error.response.data === "userName"){
+                                setSignUpErrors(SIGN_UP_ERRORS.UNAVAILABLE_USERNAME);
+                            }
+                            else if(error.response.data === "email"){
+                                setSignUpErrors(SIGN_UP_ERRORS.UNAVAILABLE_EMAIL);
+                            }
+                            else{
+                                console.log(error.response)
+                            }
+                        }
+                    }
+                })
+        }
     }
+
     function handleUNInput(event: ChangeEvent<HTMLInputElement>) {
         setUserName(event.target.value);
     }
@@ -54,6 +84,36 @@ const Login: FC<LoginProps> = ({
         setPassword(event.target.value);
     }
 
+    function getPWAlert(error: string): JSX.Element {
+        if (error === SIGN_UP_ERRORS.PASSWORDS_DONT_MATCH) {
+            return (
+                <div className="alert">
+                    <p>Passwords must match.</p>
+                </div>);
+        }
+        else { return(<Fragment/>); }
+    }
+
+    function getUserNameAlert(error:string){
+        if (error === SIGN_UP_ERRORS.UNAVAILABLE_USERNAME) {
+            return (
+                <div className="alert">
+                    <p>Username is unavailabe.</p>
+                </div>);
+        }
+        else { return(<Fragment/>); }
+    }
+
+    function getEmailAlert(error:string){
+        if (error === SIGN_UP_ERRORS.UNAVAILABLE_EMAIL) {
+            return (
+                <div className="alert">
+                    <p>Email is already in use.</p>
+                </div>);
+        }
+        else { return(<Fragment/>); }
+    }
+
 
     function getSignInForm() {
         return (
@@ -67,7 +127,7 @@ const Login: FC<LoginProps> = ({
                     <input type="text" value={password} onChange={handlePWInput} id="password" />
                 </div>
                 <div className="buttonContainer">
-                    <button type="button" onClick={handleSubmit}>Submit</button>
+                    <button type="button" onClick={handleSignIn}>Submit</button>
                 </div>
             </form>);
     }
@@ -78,11 +138,13 @@ const Login: FC<LoginProps> = ({
                 <div>
                     <label htmlFor="username">Username: </label>
                     <input type="text" value={userName} onChange={handleUNInput} id="username" />
+                    {getUserNameAlert(signUpErrors)}
                 </div>
 
                 <div>
                     <label htmlFor="email">Email: </label>
                     <input type="email" value={email} onChange={handleEmailInput} id="email" />
+                    {getEmailAlert(signUpErrors)}
                 </div>
 
                 <div>
@@ -92,6 +154,7 @@ const Login: FC<LoginProps> = ({
                 <div>
                     <label htmlFor="passwordRepeat">Confirm Password: </label>
                     <input type="password" value={confirmedPassword} onChange={handlePWRInput} id="passwordRepeat" />
+                    {getPWAlert(signUpErrors)}
                 </div>
                 <button type="button" onClick={handleSignUp}>Submit</button>
             </form>
