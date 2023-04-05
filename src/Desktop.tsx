@@ -141,10 +141,14 @@ const programsReducer = (state: ProcessState, action: ProcessAction): ProcessSta
 
 //STATE/HOOKS FOR 
 
+type DesktopProps = {
+    relog: ()=>void;
+    token:string;
+}
 
-
-const Desktop: React.FC = ({
-
+const Desktop: React.FC<DesktopProps> = ({
+    relog,
+    token
 }) => {
 
 
@@ -268,7 +272,7 @@ const Desktop: React.FC = ({
                             <Process exitApp={handleCloseApp} process={process}
                                 parentRef={desktopRef} focusThis={handleAppBarEntryClick}
                                 collapseThis={handleCollapseClick}
-                                key={process.pID} focused={focused} saveFile={handleSave} />
+                                key={process.pID} focused={focused} saveFile={handleSave} token={token} relog={relog} />
                         );
                     })
                 }

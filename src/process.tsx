@@ -12,6 +12,8 @@ type ProcessProps = {
     focusThis:(processID:number)=>void;
     saveFile ?: (fileName:string)=>void;
     collapseThis:(processID:number)=>void;
+    relog: ()=>void;
+    token:string;
 
 }
 
@@ -24,7 +26,9 @@ const Process: FC<ProcessProps> = (
         focused,
         focusThis,
         collapseThis,
-        saveFile
+        saveFile,
+        token,
+        relog
 
 
     }
@@ -125,7 +129,7 @@ const Process: FC<ProcessProps> = (
         switch (appName) {
             case "Text Editor":
                 return (
-                    <TextEditor exit={handleExit} saveFile={sureSaveFile}/>
+                    <TextEditor exit={handleExit} saveFile={sureSaveFile} token={token} relog={relog}/>
                 );
             case "Etch-A-Sketch":
                 return (

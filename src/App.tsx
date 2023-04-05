@@ -3,20 +3,31 @@ import reactLogo from './assets/react.svg'
 import './App.scss'
 import { Desktop } from './Desktop'
 import { Login } from './Login';
+import React from 'react';
 
 function App() {
 
-  let token: boolean = false;
+  const [token, setToken] = React.useState("");
 
-  if (token) {
+  function handleUserSignup(token:string):void{
+    setToken(token);
+  }
+  //for invalid token, relog back in, perhaps implement a message later
+  function clearToken():void{
+    setToken("");
+  }
+  //validate the token
+
+  if (token!=="") {
+    console.log(token);
     return (
       <>
-        <Desktop></Desktop>
+        <Desktop relog={clearToken} token={token}></Desktop>
       </>
     );
   }
   else{
-    return(<Login token={token}/>);
+    return(<Login token={handleUserSignup}/>);
   }
 }
 

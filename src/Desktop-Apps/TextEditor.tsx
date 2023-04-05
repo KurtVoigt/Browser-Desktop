@@ -6,11 +6,15 @@ import axios from "axios";
 type TextEditorProps = {
     exit: ()=>void;
     saveFile: (fileName:string)=>void;
+    token:string;
+    relog:()=>void;
 }
 
 const TextEditor: FC<TextEditorProps> = ({
     exit,
-    saveFile
+    saveFile,
+    token,
+    relog,
 }) => {
 
     const [fileMenuOpen, setFileMenuOpen] = useState(false);
@@ -67,13 +71,20 @@ const TextEditor: FC<TextEditorProps> = ({
             axios.post('/text-file', {
                 name: fileName,
                 content: fileText,
-                user: 1
+                user: 1,
+                token: token,
             })
                 .then(function (response) {
                     console.log(response);
                 })
                 .catch(function (error) {
                     console.log(error);
+                    if(error.response){
+                        //bad token, re-login for a new one
+                        if(error.response.status === 401){
+                            relog();
+                        }
+                    }
                 });
         }
         return;

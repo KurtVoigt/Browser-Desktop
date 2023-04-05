@@ -3,12 +3,25 @@ const router = express.Router();
 const path = require('path');
 const TextFileModel = require("../models/text-file.cjs");
 const mongoose = require("mongoose");
+const jwt = require('jsonwebtoken');
 require('dotenv').config({path: path.resolve(__dirname, '..','.env')});
 
-
-
+//should this be async?
+function authenticateToken(req,res,next){
+    try{
+        jwt.verify(req.body.token, process.env.SECRET_KEY, {algorithms:["HS256"]});
+    }
+    catch(err){
+        console.log(err);
+        res.status(401).send("Bad Token, log in again");
+    }
+    next();
+}
 
 async function saveToDatabase(req, res, next){
+
+
+
     const sampleText = new TextFileModel({
         name: req.body.name,
         content: req.body.content,
@@ -43,6 +56,7 @@ async function retrieveTextFiles(req, res, next){
 }
 
 router.post('/',express.json());
+router.post('/',authenticateToken);
 router.post('/',saveToDatabase);
 router.post('/',(req,res)=>{
     console.log("in \* post response");

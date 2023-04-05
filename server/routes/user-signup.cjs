@@ -56,7 +56,7 @@ router.post('/', express.json());
 router.post("/", saveUserToDatabase);
 router.post('/', (req,res)=>{
     //user now saved and in locals, generate token
-    const token = jwt.sign({userName: req.body.userName}, process.env.SECRET_KEY, {expiresIn: "1d"});
+    const token = jwt.sign({userName: req.body.userName}, process.env.SECRET_KEY, {expiresIn: "4h", algorithm:"HS256"});
     res.status(201).send(token);
 });
 

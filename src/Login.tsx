@@ -3,7 +3,7 @@ import "./Login.scss";
 import axios, { AxiosResponse } from "axios";
 
 type LoginProps = {
-    token: boolean
+    token: (token: string) => void;
 }
 
 const Login: FC<LoginProps> = ({
@@ -17,25 +17,27 @@ const Login: FC<LoginProps> = ({
     const [signIn, setSignIn] = useState(false);
     const [signUp, setSignUp] = useState(false);
 
-    function handleSubmit(event:any) {
+    function handleSubmit(event: any) {
         //submit and wait for token
         console.log("here");
         console.log(event);
     }
 
-    function handleSignUp():void{
+    function handleSignUp(): void {
         axios.post('/signup',
-        {
-            userName: userName,
-            password: password,
-            email: email,
-        }).then((response:AxiosResponse)=>{
-            //response is token, fire off signedUp Event and assign token
-            response.data
-            console.log(response);
-        }).catch((error)=>{
-            console.log(error);
-        })
+            {
+                userName: userName,
+                password: password,
+                email: email,
+            }).then((response: AxiosResponse) => {
+                //response is token, fire off signedUp Event and assign token
+                if (typeof response.data == 'string') {
+                    token(response.data);
+                }
+                console.log(response);
+            }).catch((error) => {
+                console.log(error);
+            })
     }
     function handleUNInput(event: ChangeEvent<HTMLInputElement>) {
         setUserName(event.target.value);
@@ -55,7 +57,7 @@ const Login: FC<LoginProps> = ({
 
     function getSignInForm() {
         return (
-            <form  className="loginForm">
+            <form className="loginForm">
                 <div>
                     <label htmlFor="username">Username: </label>
                     <input type="text" value={userName} onChange={handleUNInput} id="username" />
@@ -82,7 +84,7 @@ const Login: FC<LoginProps> = ({
                     <label htmlFor="email">Email: </label>
                     <input type="email" value={email} onChange={handleEmailInput} id="email" />
                 </div>
-                
+
                 <div>
                     <label htmlFor="password">Password: </label>
                     <input type="password" value={password} onChange={handlePWInput} id="password" />
@@ -96,12 +98,12 @@ const Login: FC<LoginProps> = ({
         );
     }
 
-    function handleSignInRenderClick(){
+    function handleSignInRenderClick() {
         setSignUp(false);
         setSignIn(true);
     }
 
-    function handleSignUpRenderClick(){
+    function handleSignUpRenderClick() {
         setSignIn(false);
         setSignUp(true);
     }
