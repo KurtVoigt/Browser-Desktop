@@ -16,9 +16,6 @@ try {
 
 const mongoDB = "mongodb://127.0.0.1:27017/users";
 
-function generateAccessToken(username) {
-    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-}
 
 async function saveUserToDatabase(req, res, next) {
     const newUser = new UserModel({

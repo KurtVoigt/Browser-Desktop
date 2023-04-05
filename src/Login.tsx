@@ -24,11 +24,31 @@ const Login: FC<LoginProps> = ({
     const [signIn, setSignIn] = useState(false);
     const [signUp, setSignUp] = useState(false);
     const [signUpErrors, setSignUpErrors] = useState<SIGN_UP_ERRORS>(SIGN_UP_ERRORS.NO_ERRORS);
+    const [signInError, setSignInError] = useState(false);
 
     function handleSignIn(event: any) {
         //submit and wait for token
-        console.log("here");
-        console.log(event);
+        setSignInError(false);
+        axios.post("/signin",
+            {
+                userName: userName,
+                password: password,
+            }).then((response: AxiosResponse) => {
+                if (typeof response.data === 'string') {
+                    token(response.data);
+                }
+                console.log(response);
+            }).catch((error) => {
+                if (error.response) {
+                    if (error.response.status === 404) {
+                        setSignInError(true);
+                    }
+                    else { console.log(error); }
+                }
+            })
+
+
+
     }
 
     function handleSignUp(): void {
@@ -51,16 +71,16 @@ const Login: FC<LoginProps> = ({
                     }
                     console.log(response);
                 }).catch((error) => {
-                    if(error.response){
+                    if (error.response) {
                         //bad token, re-login for a new one
-                        if(error.response.status === 409){
-                            if(error.response.data === "userName"){
+                        if (error.response.status === 409) {
+                            if (error.response.data === "userName") {
                                 setSignUpErrors(SIGN_UP_ERRORS.UNAVAILABLE_USERNAME);
                             }
-                            else if(error.response.data === "email"){
+                            else if (error.response.data === "email") {
                                 setSignUpErrors(SIGN_UP_ERRORS.UNAVAILABLE_EMAIL);
                             }
-                            else{
+                            else {
                                 console.log(error.response)
                             }
                         }
@@ -91,40 +111,52 @@ const Login: FC<LoginProps> = ({
                     <p>Passwords must match.</p>
                 </div>);
         }
-        else { return(<Fragment/>); }
+        else { return (<Fragment />); }
     }
 
-    function getUserNameAlert(error:string){
+    function getUserNameAlert(error: string) {
         if (error === SIGN_UP_ERRORS.UNAVAILABLE_USERNAME) {
             return (
                 <div className="alert">
                     <p>Username is unavailabe.</p>
                 </div>);
         }
-        else { return(<Fragment/>); }
+        else { return (<Fragment />); }
     }
 
-    function getEmailAlert(error:string){
+    function getEmailAlert(error: string) {
         if (error === SIGN_UP_ERRORS.UNAVAILABLE_EMAIL) {
             return (
                 <div className="alert">
                     <p>Email is already in use.</p>
                 </div>);
         }
-        else { return(<Fragment/>); }
+        else { return (<Fragment />); }
+    }
+
+    function getNotFoundUserAlert(notFound: boolean) {
+        if (notFound) {
+            return (
+                <div className="alert">
+                    Username and password combination doesn't exist.
+                </div>);
+        }
+        else { return (<Fragment />); }
     }
 
 
     function getSignInForm() {
         return (
             <form className="loginForm">
+                {getNotFoundUserAlert(signInError)}
+
                 <div>
                     <label htmlFor="username">Username: </label>
                     <input type="text" value={userName} onChange={handleUNInput} id="username" />
                 </div>
                 <div>
                     <label htmlFor="password">Password: </label>
-                    <input type="text" value={password} onChange={handlePWInput} id="password" />
+                    <input type="password" value={password} onChange={handlePWInput} id="password" />
                 </div>
                 <div className="buttonContainer">
                     <button type="button" onClick={handleSignIn}>Submit</button>
