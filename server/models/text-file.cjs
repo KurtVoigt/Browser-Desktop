@@ -7,7 +7,7 @@ const textFileSchema = new mongoose.Schema({
     
 })
 
-const TextFileModel = mongoose.model("Text File", textFileSchema);
+const TextFileModel = mongoose.model("textFile", textFileSchema);
 
 
 module.exports = TextFileModel;

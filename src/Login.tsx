@@ -1,5 +1,6 @@
 import { ChangeEvent, FC, useState } from "react";
 import "./Login.scss";
+import axios, { AxiosResponse } from "axios";
 
 type LoginProps = {
     token: boolean
@@ -20,6 +21,21 @@ const Login: FC<LoginProps> = ({
         //submit and wait for token
         console.log("here");
         console.log(event);
+    }
+
+    function handleSignUp():void{
+        axios.post('/signup',
+        {
+            userName: userName,
+            password: password,
+            email: email,
+        }).then((response:AxiosResponse)=>{
+            //response is token, fire off signedUp Event and assign token
+            response.data
+            console.log(response);
+        }).catch((error)=>{
+            console.log(error);
+        })
     }
     function handleUNInput(event: ChangeEvent<HTMLInputElement>) {
         setUserName(event.target.value);
@@ -75,7 +91,7 @@ const Login: FC<LoginProps> = ({
                     <label htmlFor="passwordRepeat">Confirm Password: </label>
                     <input type="password" value={confirmedPassword} onChange={handlePWRInput} id="passwordRepeat" />
                 </div>
-                <button type="button" onClick={handleSubmit}>Submit</button>
+                <button type="button" onClick={handleSignUp}>Submit</button>
             </form>
         );
     }

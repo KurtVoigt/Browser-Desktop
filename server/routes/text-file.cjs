@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const path = require('path');
 const TextFileModel = require("../models/text-file.cjs");
 const mongoose = require("mongoose");
+require('dotenv').config({path: path.resolve(__dirname, '..','.env')});
 
 
-const mongoDB = "mongodb://127.0.0.1:27017/text-files";
+
 
 async function saveToDatabase(req, res, next){
     const sampleText = new TextFileModel({
@@ -14,7 +16,7 @@ async function saveToDatabase(req, res, next){
     });
     
     try {
-        await mongoose.connect(mongoDB);
+        await mongoose.connect(process.env.MONGODB);
     }
     catch (err) {
         console.log(err);
@@ -27,7 +29,7 @@ async function saveToDatabase(req, res, next){
 
 async function retrieveTextFiles(req, res, next){
     try{
-        await mongoose.connect(mongoDB)
+        await mongoose.connect(process.env.MONGODB)
         .then( async()=>{
             const results = await TextFileModel.find();
             console.log(results);
@@ -40,9 +42,9 @@ async function retrieveTextFiles(req, res, next){
     next();
 }
 
-router.post('*',express.json());
-router.post('*',saveToDatabase);
-router.post('*',(req,res)=>{
+router.post('/',express.json());
+router.post('/',saveToDatabase);
+router.post('/',(req,res)=>{
     console.log("in \* post response");
     res.send("updated DB!");
 })
