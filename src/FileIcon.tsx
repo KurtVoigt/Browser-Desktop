@@ -1,13 +1,16 @@
 import "./FileIcon.scss";
 import { FC, Fragment, useEffect, useRef } from "react";
 type FileIconProps = {
-    fileName: string;
+    file: {
+        _id:string,
+        fileName:string,
+    };
     openFile: (fileName: string) => void;
     deselectFiles:boolean;
 }
 
 const FileIcon: FC<FileIconProps> = ({
-    fileName,
+    file,
     deselectFiles,
     openFile
 }) => {
@@ -23,9 +26,9 @@ const FileIcon: FC<FileIconProps> = ({
     }, [deselectFiles]);
 
     const fileIconJSX: JSX.Element = (
-        <div className={className}  key={fileName} ref={iconRef} onClick={handleIconClick} onDoubleClick={handleDoubleClick}>
+        <div className={className}  key={file.fileName} ref={iconRef} onClick={handleIconClick} onDoubleClick={handleDoubleClick}>
             <div className='fileIcon'></div>
-            <div className='fileName'>{fileName}</div>
+            <div className='fileName'>{file.fileName}</div>
         </div>
     );
 
@@ -35,7 +38,7 @@ const FileIcon: FC<FileIconProps> = ({
     }
 
     function handleDoubleClick(){
-        openFile(fileName);
+        openFile(file._id);
     }
 
 

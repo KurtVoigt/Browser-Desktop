@@ -3,17 +3,20 @@ import "./process.scss";
 import { ApplicationProcess } from "./Desktop";
 import { TextEditor } from "./Desktop-Apps/TextEditor";
 import { EtchASketch } from "./Desktop-Apps/etch-a-sketch";
+import { SavedAppsType } from "./Desktop";
 
 type ProcessProps = {
     exitApp: (processID: number) => void;
     process: ApplicationProcess;
     parentRef: React.RefObject<HTMLDivElement>;
-    focused:boolean;
-    focusThis:(processID:number)=>void;
-    saveFile ?: (fileName:string)=>void;
-    collapseThis:(processID:number)=>void;
-    relog: ()=>void;
-    token:string;
+    focused: boolean;
+    focusThis: (processID: number) => void;
+    saveFile: (file: SavedAppsType) => void;
+    collapseThis: (processID: number) => void;
+    relog: () => void;
+    token: string;
+    userID: string;
+    deleteFile:(fileName:string) => void;
 
 }
 
@@ -28,7 +31,9 @@ const Process: FC<ProcessProps> = (
         collapseThis,
         saveFile,
         token,
-        relog
+        relog,
+        userID,
+        deleteFile
 
 
     }
@@ -42,10 +47,7 @@ const Process: FC<ProcessProps> = (
     //true = maximize icon, false = minimize icon
     const [sizeModeIcon, setSizeModeIcon] = useState(true);
     //get around optional type checking, better way?
-    let sureSaveFile:(fileName:string)=>void;
-    if(saveFile){
-        sureSaveFile = saveFile as (fileName:string)=>void;
-    }
+    
 
 
 
@@ -57,7 +59,6 @@ const Process: FC<ProcessProps> = (
             pos3.current = event.clientX;
             pos4.current = event.clientY;
 
-            //console.log(processRef.current!.offsetTop);
 
 
             let offsetTop: number = processRef.current!.offsetTop;
@@ -115,7 +116,7 @@ const Process: FC<ProcessProps> = (
             processRef.current!.style.width = "100%";
             processRef.current!.style.height = "calc(100% - 32px)";
         }
-        else{
+        else {
             processRef.current!.style.top = "40%";
             processRef.current!.style.left = "40%";
             processRef.current!.style.width = "30%";
@@ -129,7 +130,7 @@ const Process: FC<ProcessProps> = (
         switch (appName) {
             case "Text Editor":
                 return (
-                    <TextEditor exit={handleExit} saveFile={sureSaveFile} token={token} relog={relog}/>
+                    <TextEditor exit={handleExit} saveFile={saveFile} token={token} relog={relog} userID={userID} process={process} deleteFile={deleteFile} />
                 );
             case "Etch-A-Sketch":
                 return (
@@ -153,28 +154,28 @@ const Process: FC<ProcessProps> = (
         }
 
     }
-    const handleWindowClick = () =>{
+    const handleWindowClick = () => {
         focusThis(process.pID);
     }
 
-    const handleCollapseClick = () =>{
+    const handleCollapseClick = () => {
         collapseThis(process.pID);
     }
 
 
-    let classname:string;
+    let classname: string;
 
-    if(process.collapsed){
+    if (process.collapsed) {
         classname = "processWindow collapsed"
     }
-    else if(focused){
+    else if (focused) {
         classname = "processWindow focused";
     }
-    else{
+    else {
         classname = "processWindow";
     }
 
- 
+
     return (
         <div className={classname} onMouseUp={handleMouseUp} onMouseDown={handleWindowClick}
             ref={processRef} >

@@ -1,6 +1,6 @@
 .desktopContainer {
-    width: 100vw;
-    height: 100vh;
+    width: 98vw;
+    height: 98vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,6 +10,7 @@
         width: 60vw;
         height: 80vh;
         position: relative;
+        flex-wrap: wrap;
         
         display: flex;
         gap: 20px;

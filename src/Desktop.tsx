@@ -9,8 +9,16 @@ import { AppBarEntry } from './appBarEntry';
 import Draggable from 'react-draggable';
 import App from './App';
 import { FileIcon } from './FileIcon';
+import axios from 'axios';
 
 
+
+type TextFileDataType = {
+    content: string;
+    name: string;
+    user: string;
+    id: string;
+}
 
 class ApplicationProcess {
     //might have to change this when it is possible to shut off app
@@ -18,8 +26,8 @@ class ApplicationProcess {
     public name: string;
     public pID: number;
     public collapsed: boolean;
-    public data: any;
-    constructor(name: string, data?: any) {
+    public data: TextFileDataType | null;
+    constructor(name: string, data?: TextFileDataType) {
         this.name = name;
         this.pID = ++ApplicationProcess.GlobalID;
         this.collapsed = false;
@@ -72,7 +80,6 @@ const initialState: ProcessState = {
 
 
 
-//TODO: figure out a way to just pass in number instead of whole process
 const programsReducer = (state: ProcessState, action: ProcessAction): ProcessState => {
 
     switch (action.type) {
@@ -141,28 +148,152 @@ const programsReducer = (state: ProcessState, action: ProcessAction): ProcessSta
 
 //STATE/HOOKS FOR 
 
-type DesktopProps = {
-    relog: ()=>void;
-    token:string;
+type SavedAppsType = {
+    _id: string,
+    fileName: string,
 }
+type DesktopProps = {
+    relog: () => void;
+    token: string;
+    userID: string;
+}
+
+enum FILE_REDUCER_ACTION_TYPE {
+    fetch_success = 'FILES_FETCH_SUCCESS',
+    fetch_init = 'FILES_FETCH_INIT',
+    fetch_failure = 'FILES_FETCH_FAILURE',
+    remove_GUI_Icon = 'REMOVE_GUI_ICON',
+    add_GUI_Icon = 'ADD_GUI_ICON',
+}
+type FileAction = {
+    type: FILE_REDUCER_ACTION_TYPE;
+    payload: {
+        data: any,
+    }
+}
+type FileState = {
+    isLoading: boolean,
+    isError: boolean,
+    data: SavedAppsType[]
+}
+
+const filesReducer = (state: FileState, action: FileAction): FileState => {
+    switch (action.type) {
+        case (FILE_REDUCER_ACTION_TYPE.fetch_init): {
+            return {
+                ...state,
+                isLoading: true,
+                isError: false
+            }
+        }
+        case (FILE_REDUCER_ACTION_TYPE.fetch_failure): {
+            return {
+                ...state,
+                isLoading: false,
+                isError: true,
+            }
+        }
+        case (FILE_REDUCER_ACTION_TYPE.fetch_success): {
+            return {
+                ...state,
+                isLoading: false,
+                isError: false,
+                data: action.payload.data
+            }
+        }
+        case (FILE_REDUCER_ACTION_TYPE.remove_GUI_Icon): {
+            let filtered = state.data;
+            
+            filtered = filtered.filter(entry => entry.fileName !== action.payload.data);
+            
+            return {
+                ...state,
+                data: filtered
+            }
+        }
+        case(FILE_REDUCER_ACTION_TYPE.add_GUI_Icon):{
+            return{
+                ... state,
+                data:[...state.data, action.payload.data]
+            }
+        }
+    }
+}
+
 
 const Desktop: React.FC<DesktopProps> = ({
     relog,
-    token
+    token,
+    userID,
+
 }) => {
 
-
-    const savedAppsDefault: Array<string> = [];
+    const defaultSavedApps: SavedAppsType[] = [];
     const [processes, dispatchProcesses] = React.useReducer(programsReducer, initialState);
+    const [docs, dispatchDocs] = React.useReducer(filesReducer, { isLoading: false, isError: false, data: [] });
     const [startMenuOpen, setStartMenuOpen] = React.useState(false);
     const [installedApps, setInstalledApps] = React.useState(["Etch-A-Sketch", "Text Editor"]);
-    const [savedApps, setSavedApps] = React.useState(savedAppsDefault);
-    const [deselectIcons, setDeselectIcons]= React.useState(true);
+    const [savedApps, setSavedApps] = React.useState(defaultSavedApps);
+    const [deselectIcons, setDeselectIcons] = React.useState(true);
     const desktopRef = React.useRef<HTMLDivElement>(null);
     let desktopHeight: number;
     let desktopWidth: number;
 
 
+    //get all saved text files
+
+    const handleDocFetch = React.useCallback(async function getUserDocs(): Promise<void> {
+
+        dispatchDocs({
+            type: FILE_REDUCER_ACTION_TYPE.fetch_init,
+            payload: {
+                data: null
+            }
+        })
+        const docs = axios.get('/text-file',
+            {
+                params: {
+                    userId: userID,
+                    token: token,
+                }
+            })
+            .then((response) => {
+                let returnData: SavedAppsType[] = [];
+                response.data.map((file: any) => {
+
+                    let toPush: SavedAppsType = {
+                        _id: file._id,
+                        fileName: file.name
+                    }
+                    returnData.push(toPush);
+                    return;
+                });
+
+                if (returnData.length > 0) {
+                    dispatchDocs({
+                        type: FILE_REDUCER_ACTION_TYPE.fetch_success,
+                        payload:
+                        {
+                            data: returnData
+                        }
+                    });
+                }
+
+            }).catch((err) => {
+                dispatchDocs({
+                    type: FILE_REDUCER_ACTION_TYPE.fetch_failure,
+                    payload:
+                    {
+                        data: null
+                    }
+                });
+            })
+
+    }, []);
+
+    React.useEffect(() => {
+        handleDocFetch();
+    }, [handleDocFetch])
 
     //updates ref on render so that process can access height/width for dragging purposes.
     React.useEffect(() => {
@@ -251,9 +382,23 @@ const Desktop: React.FC<DesktopProps> = ({
         )
     }
 
-    const handleSave = (name: string): void => {
-        console.log("called");
-        setSavedApps([...savedApps, name]);
+    const handleSave = (file: SavedAppsType): void => {
+        dispatchDocs({
+            type: FILE_REDUCER_ACTION_TYPE.add_GUI_Icon,
+            payload:{data:file}
+        })
+    }
+
+    const handleDelete = (file: string): void => {
+ 
+        dispatchDocs({
+            type: FILE_REDUCER_ACTION_TYPE.remove_GUI_Icon,
+            payload:
+            {
+                data: file
+            }
+        })
+
     }
 
     //"opens" all currently running apps
@@ -272,7 +417,7 @@ const Desktop: React.FC<DesktopProps> = ({
                             <Process exitApp={handleCloseApp} process={process}
                                 parentRef={desktopRef} focusThis={handleAppBarEntryClick}
                                 collapseThis={handleCollapseClick}
-                                key={process.pID} focused={focused} saveFile={handleSave} token={token} relog={relog} />
+                                key={process.pID} focused={focused} saveFile={handleSave} token={token} relog={relog} userID={userID} deleteFile={handleDelete} />
                         );
                     })
                 }
@@ -280,17 +425,53 @@ const Desktop: React.FC<DesktopProps> = ({
         );
     }
 
-    const handleIconClick = ():void=>{
+    const handleIconClick = (fileId: string): void => {
+        //build a new process from file
+        let openedFile: ApplicationProcess | null = null;
+        axios.get('/text-file/' + fileId,
+            {
+                params: {
+                    token: token,
+                }
+            })
+            .then((response) => {
+                let newTextProcessData: TextFileDataType = {
+                    content: response.data.content,
+                    name: response.data.name,
+                    user: response.data.user,
+                    id: response.data._id,
+                }
+                openedFile = new ApplicationProcess(
+                    installedApps[1], newTextProcessData
+                );
+
+                if (openedFile !== null) {
+                    dispatchProcesses(
+                        {
+                            type: PROCESS_REDUCER_ACTION_TYPES.open_program,
+                            payload: { process: openedFile }
+                        }
+                    )
+                }
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+
+
 
     }
-     
+
     const buildIconGuis = (): JSX.Element => {
+
         return (
             <React.Fragment>
                 {
-                    savedApps.map((fileName) => {
+                    docs.data.map((fileInfo) => {
                         return (
-                            <FileIcon fileName={fileName} openFile={handleIconClick} key={fileName} deselectFiles= {deselectIcons}/>
+                            <FileIcon file={fileInfo} openFile={handleIconClick} key={fileInfo._id} deselectFiles={deselectIcons} />
                         )
                     })
                 }
@@ -316,3 +497,4 @@ const Desktop: React.FC<DesktopProps> = ({
 
 
 export { Desktop, ApplicationProcess, }
+export type { SavedAppsType }

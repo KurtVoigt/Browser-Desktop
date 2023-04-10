@@ -2,12 +2,16 @@ import "./TextEditor.scss"
 import { FC, useRef, useState } from "react";
 import { DropDownMenu, SlotInfo } from "./DropDownMenu";
 import axios from "axios";
+import { ApplicationProcess, SavedAppsType } from "../Desktop";
 
 type TextEditorProps = {
-    exit: ()=>void;
-    saveFile: (fileName:string)=>void;
-    token:string;
-    relog:()=>void;
+    exit: () => void;
+    saveFile: (file: SavedAppsType) => void;
+    token: string;
+    relog: () => void;
+    userID: string;
+    process: ApplicationProcess;
+    deleteFile: (fileName: string) => void;
 }
 
 const TextEditor: FC<TextEditorProps> = ({
@@ -15,16 +19,26 @@ const TextEditor: FC<TextEditorProps> = ({
     saveFile,
     token,
     relog,
+    userID,
+    process,
+    deleteFile
 }) => {
 
+    let defautFileText: string = "";
+    let defaultFileName: string = "";
+
+    if (process.data) {
+        defautFileText = process.data.content;
+        defaultFileName = process.data.name;
+    }
     const [fileMenuOpen, setFileMenuOpen] = useState(false);
     const [formatMenuOpen, setFormatMenuOpen] = useState(false);
-    const [fileText, setFileText] = useState("");
-    const [fileName, setFileName] = useState("");
+    const [fileText, setFileText] = useState(defautFileText);
+    const [fileName, setFileName] = useState(defaultFileName);
     const [possibleFileName, setPossFileName] = useState("");
     let fileMenu: SlotInfo = {
         slotName: "File",
-        slotOptions: ["Save", "Load"],
+        slotOptions: ["Save", "Delete"],
     };
     let formattingMenu: SlotInfo = {
         slotName: "Format",
@@ -50,12 +64,11 @@ const TextEditor: FC<TextEditorProps> = ({
         setFileText(event.target.value);
     }
 
-    function handleFileNameInput(event: React.ChangeEvent<HTMLInputElement>):void{
+    function handleFileNameInput(event: React.ChangeEvent<HTMLInputElement>): void {
         setPossFileName(event.target.value);
     }
-    function handleFileNameSave():void{
+    function handleFileNameSave(): void {
         setFileName(possibleFileName);
-        saveFile(possibleFileName);
     }
 
 
@@ -65,28 +78,55 @@ const TextEditor: FC<TextEditorProps> = ({
     }
 
     function handleFileOptionClick(option: string): void {
-        
         //save
         if (option === fileMenu.slotOptions[0]) {
             axios.post('/text-file', {
                 name: fileName,
                 content: fileText,
-                user: 1,
+                user: userID,
                 token: token,
             })
                 .then(function (response) {
-                    console.log(response);
+                    let iconInfo: SavedAppsType = {
+                        _id: response.data,
+                        fileName: fileName
+                    }
+                    saveFile(iconInfo);
                 })
                 .catch(function (error) {
                     console.log(error);
-                    if(error.response){
+                    if (error.response) {
                         //bad token, re-login for a new one
-                        if(error.response.status === 401){
+                        if (error.response.status === 401) {
                             relog();
                         }
                     }
                 });
         }
+        //delete
+        else if (option === fileMenu.slotOptions[1]) {
+            axios.delete("/text-file", {
+                params: {
+                    name: fileName,
+                    content: fileText,
+                    user: userID,
+                    token: token,
+                }
+            }).then((response) => {
+                exit();
+                deleteFile(fileName);
+            }).catch((err) => {
+                console.log(err);
+
+            });
+
+        }
+
+
+
+
+
+
         return;
     }
 
@@ -100,7 +140,7 @@ const TextEditor: FC<TextEditorProps> = ({
             return (
                 <div className="fileNameDialogue">
                     <div className="messageBox">Please input a file name:</div>
-                    <input type="text" className="fileNameInput" onChange={handleFileNameInput} value={possibleFileName}/>
+                    <input type="text" className="fileNameInput" onChange={handleFileNameInput} value={possibleFileName} />
                     <div className="buttonContainer">
                         <button type="button" className="fileNameSave" onClick={handleFileNameSave}>Save</button>
                         <button type="button" className="fileNameCancel" onClick={exit}>Cancel</button>
@@ -109,13 +149,15 @@ const TextEditor: FC<TextEditorProps> = ({
             )
         }
         else {
+            /*TODO implement format bar 
+            <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick}
+                            handleSlotOptionClick={handleFormatOptionClick} />*/
             return (
                 <div className="textEditorContainer" onClick={handleAppClick}>
                     <div className="optionsBar">
                         <DropDownMenu slotInfo={fileMenu} menuOpen={fileMenuOpen} handleSlotClick={handleSlotClick}
                             handleSlotOptionClick={handleFileOptionClick} />
-                        <DropDownMenu slotInfo={formattingMenu} menuOpen={formatMenuOpen} handleSlotClick={handleSlotClick}
-                            handleSlotOptionClick={handleFormatOptionClick} />
+
                     </div>
                     <textarea className="textBox" value={fileText} onChange={handleInput}></textarea>
                 </div>

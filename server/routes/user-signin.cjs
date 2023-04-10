@@ -43,7 +43,7 @@ async function lookupUser(req, res, next) {
 function formResponse(req,res){
     if(res.locals.user){
         //send back a token
-        const token = jwt.sign({ userName: req.body.userName }, process.env.SECRET_KEY, { expiresIn: "4h", algorithm: "HS256" });
+        const token = jwt.sign({userId:res.locals.user.id }, process.env.SECRET_KEY, { expiresIn: "4h", algorithm: "HS256" });
         res.status(200).send(token);
     }
     else{

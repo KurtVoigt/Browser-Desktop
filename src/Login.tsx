@@ -1,6 +1,8 @@
 import { ChangeEvent, FC, Fragment, useState } from "react";
 import "./Login.scss";
 import axios, { AxiosResponse } from "axios";
+import jwt_decode from "jwt-decode";
+
 
 type LoginProps = {
     token: (token: string) => void;
@@ -37,7 +39,6 @@ const Login: FC<LoginProps> = ({
                 if (typeof response.data === 'string') {
                     token(response.data);
                 }
-                console.log(response);
             }).catch((error) => {
                 if (error.response) {
                     if (error.response.status === 404) {
@@ -66,10 +67,11 @@ const Login: FC<LoginProps> = ({
                     email: email,
                 }).then((response: AxiosResponse) => {
                     //response is token, fire off signedUp Event and assign token
-                    if (typeof response.data == 'string') {
+                    if (typeof response.data === 'string') {
+                       
                         token(response.data);
                     }
-                    console.log(response);
+                    
                 }).catch((error) => {
                     if (error.response) {
                         //bad token, re-login for a new one
@@ -229,3 +231,5 @@ const Login: FC<LoginProps> = ({
 
 }
 export { Login };
+
+

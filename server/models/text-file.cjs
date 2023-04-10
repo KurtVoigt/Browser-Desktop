@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const textFileSchema = new mongoose.Schema({
     name: String,
     content: String,
-    user: Number,
+    user: {type:mongoose.Types.ObjectId, ref:"user"},
     
 })
 
