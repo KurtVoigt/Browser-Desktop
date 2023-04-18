@@ -8,6 +8,18 @@
     justify-content: center;
     align-items: center;
 
+    .landingPage{
+        background-color: $taskbar-color;
+        width: 60vw;
+        height: 80vh;
+        
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20%;
+    }
+
     .loginForm {
         background-color: $taskbar-color;
         width: 60vw;
@@ -25,16 +37,17 @@
             text-align: right;
           }
 
-        .buttonContainer{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap:1ch;
-        }
+      
         
 
 
     }
+}
+.buttonContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:1ch;
 }
 
 .alert{

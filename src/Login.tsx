@@ -68,10 +68,10 @@ const Login: FC<LoginProps> = ({
                 }).then((response: AxiosResponse) => {
                     //response is token, fire off signedUp Event and assign token
                     if (typeof response.data === 'string') {
-                       
+
                         token(response.data);
                     }
-                    
+
                 }).catch((error) => {
                     if (error.response) {
                         //bad token, re-login for a new one
@@ -162,6 +162,7 @@ const Login: FC<LoginProps> = ({
                 </div>
                 <div className="buttonContainer">
                     <button type="button" onClick={handleSignIn}>Submit</button>
+                    <button type="button" onClick={handleSignUpRenderClick}>Sign Up</button>
                 </div>
             </form>);
     }
@@ -190,7 +191,10 @@ const Login: FC<LoginProps> = ({
                     <input type="password" value={confirmedPassword} onChange={handlePWRInput} id="passwordRepeat" />
                     {getPWAlert(signUpErrors)}
                 </div>
-                <button type="button" onClick={handleSignUp}>Submit</button>
+                <div className="buttonContainer">
+                    <button type="button" onClick={handleSignUp}>Submit</button>
+                    <button type="button" onClick={handleSignInRenderClick}>Sign In</button>
+                </div>
             </form>
         );
     }
@@ -207,8 +211,12 @@ const Login: FC<LoginProps> = ({
 
     function getSignChoice() {
         return (
-            <div className="signInChoiceContainer">
-                <button onClick={handleSignInRenderClick}>Sign In</button> or <button onClick={handleSignUpRenderClick}>Sign Up</button>
+            <div className="landingPage">
+                <h2>Desktop In a Browser</h2>
+                <span>An Old Fashioned Desktop-Inspired Browser Environment</span>
+                <div className="buttonContainer">
+                    <button onClick={handleSignInRenderClick}>Sign In</button> or <button onClick={handleSignUpRenderClick}>Sign Up</button>
+                </div>
             </div>);
     }
 
