@@ -1,0 +1,11 @@
+src
+tsconfig.json
+vite.config.tsconfig
+tsconfig.node.json
+.git
+.gitignore
+node_modules
+npm-debug.log
+Doclerfile*
+docker-compose*
+.vscode

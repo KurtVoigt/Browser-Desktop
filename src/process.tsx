@@ -117,8 +117,8 @@ const Process: FC<ProcessProps> = (
             processRef.current!.style.height = "calc(100% - 32px)";
         }
         else {
-            processRef.current!.style.top = "40%";
-            processRef.current!.style.left = "40%";
+            processRef.current!.style.top = "30%";
+            processRef.current!.style.left = "30%";
             processRef.current!.style.width = "30%";
             processRef.current!.style.height = "30%";
         }
