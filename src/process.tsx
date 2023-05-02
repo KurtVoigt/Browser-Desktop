@@ -46,7 +46,6 @@ const Process: FC<ProcessProps> = (
     const pos4 = useRef(0);
     //true = maximize icon, false = minimize icon
     const [sizeModeIcon, setSizeModeIcon] = useState(true);
-    //get around optional type checking, better way?
     
 
 

@@ -3,3 +3,31 @@ $taskbar-height: 30px;
 $taskbar-border-color: #2f4f4f;
 $start-menu-slot-hover-color: #706f6f;
 $start-button-clock-width: 50px;
+$base-monitor-color: #333;
+$stand-color: #222;
+$window-width: 50vw;
+$window-height: 70vh;
+
+@mixin monitor {
+    width: fit-content;
+    height: fit-content;
+    border: solid 1em #333;
+    border-radius: .4em;
+}
+
+@mixin stand {
+
+    width: calc(.4 * 50vw);
+    height: 10vw;
+    background-color: #222;
+
+
+}
+
+@mixin base {
+    width: 50vw;
+    height: 5vh;
+    background-color: #333;
+    border-top-left-radius: .5em;
+    border-top-right-radius: .5em;
+}

@@ -12,6 +12,11 @@ try {
 } catch (err) {
     console.error('crypto support is disabled!');
 }
+let MONGODB;
+if (process.argv[2])
+    MONGODB = process.env.DEV_DB;
+else
+    MONGODB = process.env.MONGODB;
 
 async function lookupUser(req, res, next) {
     const userName = req.body.userName;
@@ -19,7 +24,7 @@ async function lookupUser(req, res, next) {
     let foundUser = null;
 
     try {
-        await mongoose.connect(process.env.MONGODB);
+        await mongoose.connect(MONGODB);
     }
     catch (err) {
         console.log(err);

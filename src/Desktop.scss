@@ -1,21 +1,35 @@
+@import "./utilities/variables.scss";
+
+
 .desktopContainer {
     width: 98vw;
     height: 98vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    .desktop {
-        background-color: #37b8b8;
-        width: 60vw;
-        height: 80vh;
-        position: relative;
-        flex-wrap: wrap;
-        
-        display: flex;
-        gap: 20px;
-        overflow: hidden;
+    .monitor {
+        @include monitor;
+        .desktop {
+            background-color: #37b8b8;
+            width: $window-width;
+            height: $window-height;
+            position: relative;
+            flex-wrap: wrap;
+
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
 
 
+        }
+    }
+    .stand{
+        @include stand;
+    }
+
+    .base{
+        @include base;
     }
 }

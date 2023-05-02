@@ -6,6 +6,12 @@ const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 require('dotenv').config({path: path.resolve(__dirname, '..','.env')});
 
+let MONGODB;
+if (process.argv[2])
+    MONGODB = process.env.DEV_DB;
+else
+    MONGODB = process.env.MONGODB;
+ 
 //should this be async?
 function authenticateToken(req,res,next){
     try{
@@ -29,7 +35,7 @@ async function saveToDatabase(req, res, next){
     });
     
     try {
-        await mongoose.connect(process.env.MONGODB);
+        await mongoose.connect(MONGODB);
     }
     catch (err) {
         console.log(err);
@@ -90,7 +96,7 @@ async function retrieveTextFiles(req, res, next){
     }
 
     try{
-        await mongoose.connect(process.env.MONGODB)
+        await mongoose.connect(MONGODB)
         
     }
     catch(err){
@@ -117,7 +123,7 @@ async function getFileById(req,res,next){
         res.status(401).send("Bad Token, log in again");
     }
     try{
-        await mongoose.connect(process.env.MONGODB)
+        await mongoose.connect(MONGODB)
         
     }
     catch(err){

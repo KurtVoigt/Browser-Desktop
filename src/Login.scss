@@ -1,56 +1,71 @@
-
 @import "./utilities/variables.scss";
 
 .loginContainer {
     width: 98vw;
     height: 98vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
-    .landingPage{
-        background-color: $taskbar-color;
-        width: 60vw;
-        height: 80vh;
-        
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 20%;
+    .monitor {
+        @include monitor;
+
+
+       .landingPage {
+            background-color: $taskbar-color;
+            width: $window-width;
+            height: $window-height;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20%;
+        }
+
+        .loginForm {
+            background-color: $taskbar-color;
+            width: $window-width;
+            height: $window-height;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            overflow: hidden;
+
+            label {
+                display: inline-block;
+                width: 130px;
+                text-align: right;
+            }
+
+
+
+
+
+        }
     }
+    .stand{
+       @include stand; 
 
-    .loginForm {
-        background-color: $taskbar-color;
-        width: 60vw;
-        height: 80vh;
-        
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        overflow: hidden;
-        label {
-            display: inline-block;
-            width: 130px;
-            text-align: right;
-          }
-
-      
-        
-
-
+    }
+    
+    .base{
+        @include base;
     }
 }
-.buttonContainer{
+
+.buttonContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap:1ch;
+    gap: 1ch;
 }
 
-.alert{
+.alert {
     color: red;
     font-weight: 900;
 }

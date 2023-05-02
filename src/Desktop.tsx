@@ -21,7 +21,6 @@ type TextFileDataType = {
 }
 
 class ApplicationProcess {
-    //might have to change this when it is possible to shut off app
     static GlobalID: number = 0;
     public name: string;
     public pID: number;
@@ -203,18 +202,18 @@ const filesReducer = (state: FileState, action: FileAction): FileState => {
         }
         case (FILE_REDUCER_ACTION_TYPE.remove_GUI_Icon): {
             let filtered = state.data;
-            
+
             filtered = filtered.filter(entry => entry.fileName !== action.payload.data);
-            
+
             return {
                 ...state,
                 data: filtered
             }
         }
-        case(FILE_REDUCER_ACTION_TYPE.add_GUI_Icon):{
-            return{
-                ... state,
-                data:[...state.data, action.payload.data]
+        case (FILE_REDUCER_ACTION_TYPE.add_GUI_Icon): {
+            return {
+                ...state,
+                data: [...state.data, action.payload.data]
             }
         }
     }
@@ -385,12 +384,12 @@ const Desktop: React.FC<DesktopProps> = ({
     const handleSave = (file: SavedAppsType): void => {
         dispatchDocs({
             type: FILE_REDUCER_ACTION_TYPE.add_GUI_Icon,
-            payload:{data:file}
+            payload: { data: file }
         })
     }
 
     const handleDelete = (file: string): void => {
- 
+
         dispatchDocs({
             type: FILE_REDUCER_ACTION_TYPE.remove_GUI_Icon,
             payload:
@@ -481,16 +480,20 @@ const Desktop: React.FC<DesktopProps> = ({
 
     return (
         <div className='desktopContainer'>
-            <div className='desktop' onClick={handleDesktopClick} ref={desktopRef}>
-                <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} installedApps={installedApps} />
-                <TaskBar openProcesses={processes.openProcesses} focusNewProcess={handleAppBarEntryClick} focusedProcess={processes.focusedProcess}>
-                    <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
-                    <Clock />
-                </TaskBar>
-                {buildIconGuis()}
-                {buildAppGuis(processes.openProcesses)}
+            <div className='monitor'>
+                <div className='desktop' onClick={handleDesktopClick} ref={desktopRef}>
+                    <StartMenu visible={startMenuOpen} onProgramSelect={handleStartMenuClick} installedApps={installedApps} />
+                    <TaskBar openProcesses={processes.openProcesses} focusNewProcess={handleAppBarEntryClick} focusedProcess={processes.focusedProcess}>
+                        <StartButton onClick={handleStartButtonClick} startMenuOpen={startMenuOpen}></StartButton>
+                        <Clock />
+                    </TaskBar>
+                    {buildIconGuis()}
+                    {buildAppGuis(processes.openProcesses)}
 
+                </div>
             </div>
+            <div className="stand"></div>
+            <div className="base"></div>
         </div>
     );
 }

@@ -12,7 +12,7 @@ import { SavedAppsType } from './Desktop';
 function App() {
   type jwtType = {
     exp: number;
-    iat: number;
+    iat: number;//issued at time
     userId: string;
   }
 

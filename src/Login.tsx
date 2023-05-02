@@ -233,7 +233,11 @@ const Login: FC<LoginProps> = ({
     }
     return (
         <div className="loginContainer">
-            {getSignActionJSX()}
+            <div className="monitor">
+                {getSignActionJSX()}
+            </div>
+            <div className="stand"></div>
+            <div className="base"></div>
         </div>
     );
 
