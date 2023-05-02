@@ -213,9 +213,11 @@ const Login: FC<LoginProps> = ({
         return (
             <div className="landingPage">
                 <h2>Desktop In a Browser</h2>
-                <span>An Old Fashioned Desktop-Inspired Browser Environment</span>
-                <div className="buttonContainer">
-                    <button onClick={handleSignInRenderClick}>Sign In</button> or <button onClick={handleSignUpRenderClick}>Sign Up</button>
+                <div className="explanation">
+                    <span>An Old Fashioned Desktop-Inspired Browser Environment</span>
+                    <div className="buttonContainer">
+                        <button onClick={handleSignInRenderClick}>Sign In</button> or <button onClick={handleSignUpRenderClick}>Sign Up</button>
+                    </div>
                 </div>
             </div>);
     }

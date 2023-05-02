@@ -21,7 +21,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 20%;
+            gap: 15%;
+            
+            .explanation{
+                display: flex;
+                flex-direction: column;
+                gap: 1ch;
+            }
         }
 
         .loginForm {
@@ -40,6 +46,15 @@
                 display: inline-block;
                 width: 130px;
                 text-align: right;
+            }
+            input{
+                background: transparent;
+                border: 2px solid $taskbar-border-color;
+                &:focus{
+                    outline: none;
+                    border: 3px inset $taskbar-border-color;
+                    background-color: dimgray;
+                }
             }
 
 
@@ -61,8 +76,25 @@
 .buttonContainer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1ch;
+    button{
+        grid-area: start-button;
+        background-color: $taskbar-color;
+        width: $start-button-clock-width;
+        height: 4ch;
+        width: 9ch;
+        border: 2px outset $taskbar-border-color;
+        margin-left: 5px;
+        text-align: center;
+        cursor: pointer;
+    
+        &:active,
+        &.active {
+            background-color: dimgrey;
+            border-style: inset;
+        }
+    }
 }
 
 .alert {
